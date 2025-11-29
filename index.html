@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>简易 Google 图片搜索（默认大图）</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial}
+    body{display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f5f7fb}
+    .card{background:white;padding:24px;border-radius:12px;box-shadow:0 6px 20px rgba(20,30,60,0.08);max-width:640px;width:100%}
+    h1{margin:0 0 12px;font-size:18px}
+    form{display:flex;gap:8px}
+    input[type=text]{flex:1;padding:10px 12px;border:1px solid #e3e8ef;border-radius:8px;font-size:15px}
+    button{padding:10px 14px;border-radius:8px;border:0;background:#2563eb;color:white;font-weight:600;cursor:pointer}
+    .help{margin-top:10px;color:#6b7280;font-size:13px}
+    label{display:inline-flex;align-items:center;gap:8px;color:#374151}
+    .controls{display:flex;align-items:center;gap:12px}
+    input[type=checkbox]{width:16px;height:16px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>简易 Google 图片搜索（默认大图）</h1>
+    <form id="searchForm">
+      <input id="q" type="text" placeholder="在此输入搜索关键词（例如：猫）" required />
+      <button type="submit">搜索</button>
+    </form>
+    <div class="controls" style="margin-top:10px">
+      <label title="是否在 URL 中加入 &tbs=isz:l（仅限大图）">
+        <input id="forceLarge" type="checkbox" checked /> 默认加入 &tbs=isz:l
+      </label>
+      <label title="是否在新标签打开结果">
+        <input id="newTab" type="checkbox" checked /> 新标签打开
+      </label>
+    </div>
+    <p class="help">该页面会构造 Google 图片搜索链接：
+      <code>https://www.google.com/search?tbm=isch&q=关键词&amp;tbs=isz:l</code>
+      。复制保存为 <code>.html</code> 后直接在浏览器打开即可使用。
+    </p>
+  </div>
+
+  <script>
+    const form = document.getElementById('searchForm');
+    const qInput = document.getElementById('q');
+    const forceLarge = document.getElementById('forceLarge');
+    const newTab = document.getElementById('newTab');
+
+    function buildUrl(query){
+      // 基本 Google 图片搜索固定参数 tbm=isch
+      const base = 'https://www.google.com/search?tbm=isch';
+      const params = new URLSearchParams();
+      params.set('q', query);
+      // 如果用户勾选，强制添加 tbs=isz:l（大图）
+      if (forceLarge.checked) params.set('tbs', 'isz:l');
+      return base + '&' + params.toString();
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const q = qInput.value.trim();
+      if (!q) return;
+      const url = buildUrl(q);
+      if (newTab.checked) window.open(url, '_blank', 'noopener');
+      else window.location.href = url;
+    });
+
+    // 支持用户粘贴一个完整的 Google 图片搜索 URL：如果包含 tbm=isch，会把关键词解析出来并保留 tbs 设置
+    qInput.addEventListener('paste', async (ev) => {
+      const text = (ev.clipboardData || window.clipboardData).getData('text');
+      try{
+        const u = new URL(text);
+        if (u.searchParams.get('tbm') === 'isch'){
+          // 尝试从 q 参数恢复为输入框内容
+          const q = u.searchParams.get('q') || '';
+          qInput.value = q;
+          // 如果已有 tbs=isz:l，则勾上
+          if (u.searchParams.get('tbs') === 'isz:l') forceLarge.checked = true;
+          ev.preventDefault();
+        }
+      }catch(e){/* not a url, ignore */}
+    });
+
+  </script>
+</body>
+</html>
