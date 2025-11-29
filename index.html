@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>简易 Google 图片搜索（默认大图）</title>
+  <title> 大图片google搜索</title>
   <style>
     :root{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial}
     body{display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f5f7fb}
@@ -50,7 +50,7 @@
       const base = 'https://www.google.com/search?tbm=isch';
       const params = new URLSearchParams();
       params.set('q', query);
-      // 如果用户勾选，强制添加 tbs=isz:l（大图）
+      // 如果用户勾选，强制添加 &imgsz=l（大图）
       if (forceLarge.checked) params.set('imgsz', 'l');
       return base + '&' + params.toString();
     }
