@@ -26,8 +26,8 @@
       <button type="submit">搜索</button>
     </form>
     <div class="controls" style="margin-top:10px">
-      <label title="是否在 URL 中加入 &tbs=isz:l（仅限大图）">
-        <input id="forceLarge" type="checkbox" checked /> 默认加入 &tbs=isz:l
+      <label title="是否在 URL 中加入 &imgsz=l（仅限大图）">
+        <input id="forceLarge" type="checkbox" checked /> 默认加入 &imgsz=l
       </label>
       <label title="是否在新标签打开结果">
         <input id="newTab" type="checkbox" checked /> 新标签打开
@@ -51,7 +51,7 @@
       const params = new URLSearchParams();
       params.set('q', query);
       // 如果用户勾选，强制添加 tbs=isz:l（大图）
-      if (forceLarge.checked) params.set('tbs', 'isz:l');
+      if (forceLarge.checked) params.set('imgsz', 'l');
       return base + '&' + params.toString();
     }
 
@@ -74,7 +74,7 @@
           const q = u.searchParams.get('q') || '';
           qInput.value = q;
           // 如果已有 tbs=isz:l，则勾上
-          if (u.searchParams.get('tbs') === 'isz:l') forceLarge.checked = true;
+          if (u.searchParams.get('imgsz') === 'l') forceLarge.checked = true;
           ev.preventDefault();
         }
       }catch(e){/* not a url, ignore */}
